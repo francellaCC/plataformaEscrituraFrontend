@@ -1,0 +1,57 @@
+{
+  "proyect": [
+    {
+      "id": 1,
+      "name": "El Viaje de los Sueños",
+      "sinopsis": "Una historia épica sobre un niño que descubre un mundo paralelo.",
+      "userId": 1,
+      "urlImageProject": null,
+      "typeProject": "book"
+    }
+  ],
+  "chapter": [
+    {
+      "id": 1,
+      "projectId": 1,
+      "title": "Capítulo 1: El Comienzo"
+    },
+    {
+      "id": 2,
+      "projectId": 1,
+      "title": "Capítulo 2: La Puerta"
+    }
+  ],
+  "cellProyec": [
+    {
+      "id": 1,
+      "refProyect": 1,
+      "chapterId": 1,
+      "textContent": "Era una mañana tranquila cuando todo comenzó. Las hojas se mecían suavemente por el viento mientras Lucas observaba el horizonte desde su ventana.",
+      "maxLength": 1000,
+      "typeStyleToShow": "narracion"
+    },
+    {
+      "id": 2,
+      "refProyect": 1,
+      "chapterId": 1,
+      "textContent": "—¿Estás listo para la aventura? —preguntó su padre mientras le entregaba una pequeña mochila con provisiones y una linterna oxidada.",
+      "maxLength": 1000,
+      "typeStyleToShow": "dialogo"
+    },
+    {
+      "id": 3,
+      "refProyect": 1,
+      "chapterId": 2,
+      "textContent": "Al abrir la vieja puerta del desván, una luz brillante lo envolvió por completo. Lucas sintió que sus pies dejaban el suelo y su cuerpo flotaba suavemente hacia lo desconocido.",
+      "maxLength": 1000,
+      "typeStyleToShow": "narracion"
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "username": "autor1",
+      "email": "autor1@example.com"
+    }
+  ]
+}
