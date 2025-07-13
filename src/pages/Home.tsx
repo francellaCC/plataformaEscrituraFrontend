@@ -13,7 +13,7 @@ function Home() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
           {/* Tarjeta para crear nuevo */}
-          <Link to="/editor/nuevo">
+          <Link to="/editor">
             <div className="border border-dashed border-neutral-400 rounded-2xl p-6 hover:bg-neutral-200 transition text-center cursor-pointer">
               <p className="text-neutral-500 text-xl">+ Nuevo Proyecto</p>
             </div>
