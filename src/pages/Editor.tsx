@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Editor } from 'primereact/editor';
 import { Button } from 'primereact/button';
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
@@ -50,7 +50,7 @@ const BookEditor = () => {
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
-      cancelButtonText:"Cancelar!",
+      cancelButtonText: "Cancelar!",
       confirmButtonText: "Si, eliminalo!"
     }).then((result) => {
       if (result.isConfirmed) {
@@ -74,14 +74,28 @@ const BookEditor = () => {
   return (
     <div>
 
-      <div className="w-full border-b px-6 py-4 bg-gray-100 sticky top-0 z-10">
-        <input
-          type="text"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          className="text-2xl font-semibold w-full outline-none bg-transparent"
-          placeholder="Nombre del documento"
-        />
+      <div className="w-full flex items-center justify-between px-6 py-4 border-b bg-white sticky top-0 z-50">
+        <div>
+          <label className='text-sm ' htmlFor="">Dios de las tinieblas</label>
+          <input
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="text-2xl font-semibold w-full outline-none bg-transparent"
+            placeholder="Nombre del documento"
+          />
+        </div>
+        <div className="flex items-center gap-4">
+          <button  className="bg-gray-700 text-white hover:bg-gray-950 px-4 py-2  rounded-lg">
+           Publicar
+          </button>
+          <button className=" border border-black text-black px-4 py-2  rounded-lg">
+            Guardar
+          </button>
+           <button className=" border border-black text-black px-4 py-2  rounded-lg">
+            Vista previa
+          </button>
+        </div>
       </div>
       <div className="flex flex-col gap-6 p-6 w-full">
         <Button
