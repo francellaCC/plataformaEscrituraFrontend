@@ -6,6 +6,7 @@ import MyWorks from "./pages/MyWorks";
 import { Auth0Provider } from "@auth0/auth0-react";
 import Login from "./pages/Login";
 import MainLayout from "./layouts/MainLayout";
+import AuthCheck from "./components/AuthCheck";
 
 
 export default function Router() {
@@ -19,17 +20,23 @@ export default function Router() {
     <Auth0Provider
       domain={domain}
       clientId={clientId}
-      authorizationParams={{ redirect_uri: window.location.origin, scope: "openid profile email" }}
+      authorizationParams={{
+        redirect_uri: window.location.origin + "/auth/check",
+        audience: "http://localhost:8080/api",
+        scope: "openid profile email read:users"
+      }}
     >
       <Routes>
-       
+        <Route path="/" element={<Navigate to="/auth/login" />} />
+
         <Route element={<MainLayout />}>
-          <Route path="/" index element={<Home />} />
+          <Route path="/home" index element={<Home />} />
           <Route path="/myworks" element={<MyWorks />} />
           <Route path="/newProject" element={<NewProject />} />
           <Route path="/editor" element={<BookEditor />} />
         </Route>
         <Route path="/auth/login" element={<Login />} />
+        <Route path="/auth/check" element={<AuthCheck />} />
       </Routes>
     </Auth0Provider>
   )
