@@ -24,21 +24,21 @@ export default function AuthCheck() {
           nameUser: user.name,
           email: user.email
         }
-
-        console.log(user)
-        console.log("authCheck", token);
         login(userData);
         setHasCalledLogin(true);
-        console.log("data", data)
       }
     };
     doLogin();
   }, [isAuthenticated, user, hasCalledLogin, login, getAccessTokenSilently, dispatch]);
 
   useEffect(() => {
+    if (isSuccess) {
+      navigate("/home")
+    }
+  }, [isSuccess, navigate])
+  useEffect(() => {
     if (isError) {
       console.error('Error backend:', error);
-      // Podés mostrar mensaje de error en UI aquí
     }
   }, [isError, error]);
 
