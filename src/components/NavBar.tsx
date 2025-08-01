@@ -2,8 +2,6 @@
 
 function NavBar() {
   return (
-
-
     <nav className=" border-b">
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
 

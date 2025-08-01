@@ -7,6 +7,8 @@ import { Auth0Provider } from "@auth0/auth0-react";
 import Login from "./pages/Login";
 import MainLayout from "./layouts/MainLayout";
 import AuthCheck from "./components/AuthCheck";
+import UserProfile from "./pages/UserProfile";
+import ProyectsLayout from "./layouts/ProyectsLayout";
 
 
 export default function Router() {
@@ -32,6 +34,10 @@ export default function Router() {
         <Route element={<MainLayout />}>
           <Route path="/home" index element={<Home />} />
           <Route path="/myworks" element={<MyWorks />} />
+          <Route path="/user/userProfile" element={<UserProfile />} />
+
+        </Route>
+        <Route element={<ProyectsLayout />}>
           <Route path="/newProject" element={<NewProject />} />
           <Route path="/editor" element={<BookEditor />} />
         </Route>
