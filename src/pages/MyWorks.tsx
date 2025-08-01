@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import NavBar from '../components/NavBar'
+import { useNavigate } from 'react-router-dom'
 
 function MyWorks() {
   const [proyectos, setProyectos] = useState([])
 
 
-
+const navigate = useNavigate()
   return (
     <>
     <NavBar/>
@@ -17,7 +18,7 @@ function MyWorks() {
             {/* Tarjeta para crear nuevo */}
             <div className=" w-[700px] h-[200px] border border-dashed border-neutral-400 rounded-2xl p-6 text-center ">
               <p className="text-neutral-500 text-3xl pb-4 mt-7">Hola, aun no tienes un proyecto creado</p>
-              <button className="bg-orange-500 hover:bg-orange-600  text-white px-4 py-2 rounded">
+              <button className="bg-orange-500 hover:bg-orange-600  text-white px-4 py-2 rounded" onClick={()=>navigate("/newProject")}>
                 + Nuevo Proyecto
               </button>
             </div>

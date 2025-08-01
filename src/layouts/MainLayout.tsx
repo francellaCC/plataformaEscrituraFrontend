@@ -1,11 +1,16 @@
 
 import { Outlet } from 'react-router-dom'
+import NavBar from '../components/NavBar'
 
 function MainLayout() {
   return (
-    <main className="flex-grow p-6 bg-gray-50">
-      <Outlet />
-    </main>
+    <>
+      <NavBar />
+      <main className="flex-grow p-6 ">
+        <Outlet />
+      </main>
+    </>
+
   )
 }
 

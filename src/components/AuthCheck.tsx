@@ -19,6 +19,7 @@ export default function AuthCheck() {
       if (isAuthenticated && user && !hasCalledLogin) {
         const token = await getAccessTokenSilently();
 
+        console.log(user)
         dispatch(setAuthState({ user, token }));
         const userData = {
           nameUser: user.name,
