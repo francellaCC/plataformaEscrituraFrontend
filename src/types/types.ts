@@ -4,3 +4,24 @@ export type User ={
   picture: string | null,
 
 }
+
+
+export interface StoryRequest{
+  title: string;
+  description: string;
+  genre:string;
+  coverImageUrl?:string;
+  visibility: 'piblic' | "private";
+  status: 'in_progress' | 'completed'
+}
+
+export interface StoryResponse{
+  id: string;
+  title: string,
+  description: string;
+  genre: string;
+  coverImageUrl:string;
+  visibility: string;
+  status: string;
+  createdAt: string;
+}
