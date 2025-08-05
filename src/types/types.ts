@@ -25,3 +25,13 @@ export interface StoryResponse{
   status: string;
   createdAt: string;
 }
+
+export interface ChapterRequest{
+  title:string
+}
+
+export interface ChapterResponse{
+  id:number;
+  title: string;
+  createdAt: string
+}
