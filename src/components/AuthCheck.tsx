@@ -34,7 +34,7 @@ export default function AuthCheck() {
 
   useEffect(() => {
     if (isSuccess) {
-      navigate("/home")
+      navigate("/user/userProfile")
     }
   }, [isSuccess, navigate])
   useEffect(() => {
