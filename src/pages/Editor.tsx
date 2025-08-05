@@ -5,6 +5,8 @@ import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import Swal from 'sweetalert2';
+import { useParams } from 'react-router-dom';
+import { useGetStoryByIdQuery } from '../services/storyApi';
 
 interface TextCell {
   id: string;
@@ -15,11 +17,14 @@ interface TextCell {
 const BookEditor = () => {
   const [cells, setCells] = useState<TextCell[]>([]);
   const [editingCellId, setEditingCellId] = useState<string | null>(null);
+  const [title, setTitle] = useState('Parte 1 ');
 
+  const {idStory} = useParams()
+  const storyId = idStory ? parseInt(idStory) : 0;
 
-  const [title, setTitle] = useState('Nombre del documento');
+  const {data: story, isLoading, error} = useGetStoryByIdQuery(storyId!)
 
-
+  console.log(story)
   const addCell = () => {
 
     const id = crypto.randomUUID()
@@ -76,7 +81,7 @@ const BookEditor = () => {
 
       <div className="w-full flex items-center justify-between px-6 py-4 border-b bg-white sticky top-0 z-50">
         <div>
-          <label className='text-sm ' htmlFor="">Dios de las tinieblas</label>
+          <label className='text-sm ' htmlFor="">{story?.title}</label>
           <input
             type="text"
             value={title}

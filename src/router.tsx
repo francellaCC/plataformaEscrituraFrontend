@@ -39,7 +39,7 @@ export default function Router() {
         </Route>
         <Route element={<ProyectsLayout />}>
           <Route path="/newProject" element={<NewProject />} />
-          <Route path="/editor" element={<BookEditor />} />
+          <Route path="/editor/:idStory" element={<BookEditor />} />
         </Route>
         <Route path="/auth/login" element={<Login />} />
         <Route path="/auth/check" element={<AuthCheck />} />
