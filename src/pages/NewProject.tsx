@@ -21,7 +21,7 @@ function NewProject() {
    createStory(dataForm)
 
     if (isSuccess) {
-      navigate('/editor')
+      navigate(`/editor/${data.id}`)
     }
 
     if (isError) {

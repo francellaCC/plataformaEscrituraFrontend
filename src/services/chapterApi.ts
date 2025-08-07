@@ -7,7 +7,7 @@ export const chapterApi = createApi({
   reducerPath: 'chapterApi',
   baseQuery: baseQuery,
   endpoints: (builder) => ({
-    createChapter: builder.mutation<ChapterResponse, { storyId: number, data: ChapterRequest }>({
+    createChapter: builder.mutation<ChapterResponse, { storyId: number; data: ChapterRequest }>({
       query: ({ storyId, data }) => ({
         url: `/chapter/create/${storyId}`,
         method: "POST",
