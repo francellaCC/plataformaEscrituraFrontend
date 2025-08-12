@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Editor } from 'primereact/editor';
 import { Button } from 'primereact/button';
 import Swal from 'sweetalert2';
@@ -8,64 +8,43 @@ import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 import { useCreateChapterMutation } from '../services/chapterApi';
+import type { TextCell } from '../types/types';
+import { groupCellsIntoPages } from '../utils/paginationUtils';
 
-interface TextCell {
-  id: string;
-  content: string;
-  isEditing: boolean;
-}
 
-const MAX_CHARACTERS_PER_PAGE = 1000;
 
-// Función que divide las celdas en páginas según la cantidad de caracteres
-function splitCellsIntoPages(cells: TextCell[]): string[] {
-  const pages: string[] = [];
-  let currentPage = '';
-
-  for (const cell of cells) {
-    const text = cell.content.replace(/<[^>]*>?/gm, ''); // eliminar etiquetas HTML para contar texto plano
-
-    if ((currentPage + text).length > MAX_CHARACTERS_PER_PAGE) {
-      pages.push(currentPage);
-      currentPage = text;
-    } else {
-      currentPage += text;
-    }
-  }
-
-  if (currentPage.length > 0) {
-    pages.push(currentPage);
-  }
-
-  return pages;
-}
 
 const BookEditor = () => {
   const [cells, setCells] = useState<TextCell[]>([]);
   const [editingCellId, setEditingCellId] = useState<string | null>(null);
   const [title, setTitle] = useState('Parte 1');
-  const [previewPages, setPreviewPages] = useState<string[]>([]);
 
   const { idStory } = useParams();
   const storyId = idStory ? parseInt(idStory) : 0;
   const { data: story } = useGetStoryByIdQuery(storyId!);
-  const [createChapter] = useCreateChapterMutation()
+  const [createChapter, { data: chapter }] = useCreateChapterMutation()
+
+  // Se accede al nodo DOM de la celda creada
+  const cellRefs = useRef<Record<string, HTMLDivElement | null>>({});
+
+  // como PrimerReact no maneja autoFocus nativo, se crea un ref para poder hacer este efecto
+  const editorRef = useRef<Record<string, Editor | null>>({})
 
   useEffect(() => {
-  if (!title) return; // Evita enviar si title está vacío
+    if (!title) return; // Evita enviar si title está vacío
 
-  
-  const timeoutId = setTimeout(() => {
-    createChapter({
-      storyId ,
-      data: { title }
-    });
-    console.log(storyId, title)
-  }, 1000); // espera 1000 ms (1 segundo)
 
-  // Cleanup: si el título cambia antes de los 1000 ms, cancela el anterior
-  return () => clearTimeout(timeoutId);
-}, [title]);
+    const timeoutId = setTimeout(() => {
+      createChapter({
+        storyId,
+        data: { title }
+      });
+      console.log(chapter)
+    }, 1000); // espera 1000 ms (1 segundo)
+
+    // Cleanup: si el título cambia antes de los 1000 ms, cancela el anterior
+    return () => clearTimeout(timeoutId);
+  }, [title]);
 
   const addCell = () => {
     const id = crypto.randomUUID();
@@ -77,6 +56,21 @@ const BookEditor = () => {
       })
     );
     setEditingCellId(id);
+
+    // esperamos un clico poara que el Dom se actualice
+    setTimeout(() => {
+      const el = cellRefs.current[id]
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+
+      const editorInstance = editorRef.current[id]
+      if (editorInstance) {
+        const editableDiv = editorInstance.getQuill().root
+        editableDiv.focus()
+      }
+
+    }, 50)
   };
 
   const updateContent = (id: string, newContent: string) => {
@@ -110,22 +104,18 @@ const BookEditor = () => {
   };
 
   const handleSavePages = () => {
-    const pages = splitCellsIntoPages(cells);
-    setPreviewPages(pages);
+    const pages = groupCellsIntoPages(cells);
 
-    // Aquí se enviarían al backend con una mutation
-    pages.forEach((content, index) => {
-      console.log(`📄 Página ${index + 1}:`, content);
-      // createPageMutation({ chapterId, pageNumber: index + 1, content })
-    });
+
+    console.log("Pages", pages);
 
     Swal.fire('¡Páginas preparadas!', `Se generaron ${pages.length} páginas.`, 'success');
   };
 
   return (
-    <div>
+    <div className=' bg-gray-100 min-h-screen'>
       {/* Header */}
-      <div className="w-full flex items-center justify-between px-6 py-4 border-b bg-white sticky top-0 z-50">
+      <div className="w-full flex items-center justify-between px-6 py-4 border-b bg-white sticky top-0 z-40">
         <div>
           <label className="text-sm text-gray-500">{story?.title}</label>
           <input
@@ -146,80 +136,74 @@ const BookEditor = () => {
           >
             Guardar
           </button>
-          <button className="border border-black text-black px-4 py-2 rounded-lg">
+          <button disabled className="border border-black text-black px-4 py-2 rounded-lg ">
             Vista previa
           </button>
         </div>
       </div>
 
       {/* Editor */}
-      <div className="flex flex-col gap-6 p-6 w-full">
-        <Button
-          icon="pi pi-plus"
-          label="Agregar Celda"
-          onClick={addCell}
-          className="self-start"
-        />
+      <div className="flex flex-col gap-6  w-full">
+        <div className='sticky top-[4.7rem] z-50 bg-white pb-4 pt-3 '>
+          <Button
+            icon="pi pi-plus"
+            label="Agregar Celda"
+            onClick={addCell}
+            className="self-start"
+          />
+        </div>
 
-        {cells.map((cell) => (
-          <div
-            key={cell.id}
-            className="group relative flex w-full items-start gap-4 px-6 py-4 border-b"
-          >
-            {editingCellId === cell.id ? (
-              <>
-                <div className="w-1/2">
-                  <Editor
-                    value={cell.content}
-                    onTextChange={(e) => updateContent(cell.id, e.htmlValue!)}
-                    style={{ height: '200px' }}
-                  />
-                </div>
-                <div
-                  className="w-1/2 prose max-w-none"
-                  dangerouslySetInnerHTML={{ __html: cell.content }}
-                />
-              </>
-            ) : (
-              <>
-                <div
-                  className="w-full prose max-w-none"
-                  dangerouslySetInnerHTML={{ __html: cell.content }}
-                />
-                <div className="absolute right-6 top-4 hidden group-hover:flex gap-2">
-                  <button
-                    onClick={() => setEditingCellId(cell.id)}
-                    className="text-sm text-blue-500 hover:cursor-pointer"
-                  >
-                    ✏️
-                  </button>
-                  <button
-                    onClick={() => deleteCell(cell.id)}
-                    className="text-sm text-red-500 hover:cursor-pointer"
-                  >
-                    🗑️
-                  </button>
-                </div>
-              </>
-            )}
-          </div>
-        ))}
+        <div className='flex justify-center'> 
+          <div className='bg-white  shadow-md rounded-lg px-8 py-10 max-w-[800px] w-full'>
 
-        {/* Vista previa de páginas */}
-        {previewPages.length > 0 && (
-          <div className="mt-10">
-            <h3 className="text-xl font-bold mb-4">Vista previa de páginas:</h3>
-            {previewPages.map((page, i) => (
+
+            {cells.map((cell) => (
               <div
-                key={i}
-                className="border p-4 mb-4 bg-white shadow rounded-md"
+                key={cell.id}
+                ref={(el) => { cellRefs.current[cell.id] = el }}
+                className="group flex-row relative flex w-full items-start gap-4 px-6 py-4 border-b"
               >
-                <p className="font-bold mb-2">Página {i + 1}</p>
-                <p className="whitespace-pre-wrap">{page}</p>
+                {editingCellId === cell.id ? (
+                  <>
+                    <div className=" w-full">
+                      <Editor
+                        value={cell.content}
+                        onTextChange={(e) => updateContent(cell.id, e.htmlValue!)}
+                        ref={(el) => { editorRef.current[cell.id] = el }}
+                        style={{ width: '650px', height: '200px', wordWrap: 'break-word', overflowWrap: 'break-word' }}
+                      />
+                    </div>
+                    {/* <div
+                    className="prose max-w-none break-words whitespace-pre-wrap"
+                    dangerouslySetInnerHTML={{ __html: cell.content }}
+                  /> */}
+                  </>
+                ) : (
+                  <>
+                    <div
+                      className="prose max-w-none break-words whitespace-pre-wrap"
+                      dangerouslySetInnerHTML={{ __html: cell.content }}
+                    />
+                    <div className="absolute right-6 top-4 hidden group-hover:flex gap-2">
+                      <button
+                        onClick={() => setEditingCellId(cell.id)}
+                        className="text-sm text-blue-500 hover:cursor-pointer"
+                      >
+                        ✏️
+                      </button>
+                      <button
+                        onClick={() => deleteCell(cell.id)}
+                        className="text-sm text-red-500 hover:cursor-pointer"
+                      >
+                        🗑️
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             ))}
           </div>
-        )}
+        </div>
       </div>
     </div>
   );
