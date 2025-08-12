@@ -7,8 +7,8 @@ import { useGetStoryByIdQuery } from '../services/storyApi';
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
-import { useCreateChapterMutation } from '../services/chapterApi';
-import type { TextCell } from '../types/types';
+import { useCreateChapterMutation, useUpdateChapterMutation } from '../services/chapterApi';
+import type { ChapterResponse, TextCell } from '../types/types';
 import { groupCellsIntoPages } from '../utils/paginationUtils';
 
 
@@ -22,7 +22,9 @@ const BookEditor = () => {
   const { idStory } = useParams();
   const storyId = idStory ? parseInt(idStory) : 0;
   const { data: story } = useGetStoryByIdQuery(storyId!);
-  const [createChapter, { data: chapter }] = useCreateChapterMutation()
+  const [createChapter] = useCreateChapterMutation()
+  const [updateChapter, { data: chapterUpdate }] = useUpdateChapterMutation()
+  const [chapterId, setCahpterId] = useState<number>()
 
   // Se accede al nodo DOM de la celda creada
   const cellRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -31,15 +33,30 @@ const BookEditor = () => {
   const editorRef = useRef<Record<string, Editor | null>>({})
 
   useEffect(() => {
-    if (!title) return; // Evita enviar si title está vacío
+    if (!title.trim()) return; // Evita enviar si title está vacío
 
 
-    const timeoutId = setTimeout(() => {
-      createChapter({
-        storyId,
-        data: { title }
-      });
-      console.log(chapter)
+    const timeoutId = setTimeout(async () => {
+
+      try {
+        if (!chapterId) {
+          // se crea el capitulo
+          const newChapter: ChapterResponse = await createChapter({
+            storyId,
+            data: { title }
+          }).unwrap();
+          console.log("cahpter", newChapter)
+          setCahpterId(newChapter.idChapter)
+        } else {
+          // se actualiza
+          await updateChapter({ storyId, chapterId, data: { title } }).unwrap()
+          console.log(chapterUpdate)
+        }
+      } catch (error) {
+        console.error("Error en creación/actualización de capítulo", error);
+      }
+      console.log("cahpterId", chapterId)
+
     }, 1000); // espera 1000 ms (1 segundo)
 
     // Cleanup: si el título cambia antes de los 1000 ms, cancela el anterior
@@ -153,7 +170,7 @@ const BookEditor = () => {
           />
         </div>
 
-        <div className='flex justify-center'> 
+        <div className='flex justify-center'>
           <div className='bg-white  shadow-md rounded-lg px-8 py-10 max-w-[800px] w-full'>
 
 

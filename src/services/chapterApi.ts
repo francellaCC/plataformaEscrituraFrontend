@@ -13,8 +13,15 @@ export const chapterApi = createApi({
         method: "POST",
         body: data
       })
+    }),
+    updateChapter: builder.mutation<ChapterResponse, { storyId: number; chapterId : number;  data: ChapterRequest }>({
+      query: ({ storyId,chapterId, data }) => ({
+        url: `/chapter/update/${storyId}/${chapterId}`,
+        method: 'PUT',
+        body: data
+      })
     })
   })
 })
 
-export const { useCreateChapterMutation, } = chapterApi;
+export const { useCreateChapterMutation, useUpdateChapterMutation } = chapterApi;

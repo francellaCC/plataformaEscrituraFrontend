@@ -31,7 +31,7 @@ export interface ChapterRequest{
 }
 
 export interface ChapterResponse{
-  id:number;
+  idChapter:number;
   title: string;
   createdAt: string
 }
