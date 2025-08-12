@@ -35,3 +35,9 @@ export interface ChapterResponse{
   title: string;
   createdAt: string
 }
+
+export interface TextCell {
+  id: string;
+  content: string;
+  isEditing: boolean;
+}
