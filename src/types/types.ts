@@ -41,3 +41,18 @@ export interface TextCell {
   content: string;
   isEditing: boolean;
 }
+
+
+export interface PageRequest {
+  content: string;      
+  pageNumber: number;   
+}
+
+
+export interface PageResponse {
+  id: number;
+  content: string;
+  pageNumber: number;
+  chapterId: number;
+  createdAt: string; 
+}
