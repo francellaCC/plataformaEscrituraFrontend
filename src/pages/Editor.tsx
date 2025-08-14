@@ -10,6 +10,7 @@ import 'primeicons/primeicons.css';
 import { useCreateChapterMutation, useUpdateChapterMutation } from '../services/chapterApi';
 import type { ChapterResponse, TextCell } from '../types/types';
 import { groupCellsIntoPages } from '../utils/paginationUtils';
+import { useCreatePageMutation } from '../services/pageApi';
 
 
 
@@ -22,9 +23,10 @@ const BookEditor = () => {
   const { idStory } = useParams();
   const storyId = idStory ? parseInt(idStory) : 0;
   const { data: story } = useGetStoryByIdQuery(storyId!);
+  const [chapterId, setCahpterId] = useState<number>()
   const [createChapter] = useCreateChapterMutation()
   const [updateChapter, { data: chapterUpdate }] = useUpdateChapterMutation()
-  const [chapterId, setCahpterId] = useState<number>()
+  const [createPage] = useCreatePageMutation()
 
   // Se accede al nodo DOM de la celda creada
   const cellRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -126,6 +128,28 @@ const BookEditor = () => {
 
     console.log("Pages", pages);
 
+
+    pages.forEach(async (page) => {
+
+      const combinedContent = page.cells.map(c => c.content).join("\n")
+
+      console.log("pageNumber", page.number)
+
+      const dataN = {
+        pageNumber: page.number,
+        content: combinedContent
+      }
+      console.log("chapterId",chapterId)
+      console.log(dataN)
+      await createPage({
+        storyId,
+        chapterId: chapterId!,
+        data: {
+          pageNumber: page.number,
+          content: combinedContent
+        }
+      }).unwrap()
+    })
     Swal.fire('¡Páginas preparadas!', `Se generaron ${pages.length} páginas.`, 'success');
   };
 
