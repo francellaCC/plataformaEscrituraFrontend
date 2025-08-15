@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import EditorNavbar from "../components/EditorNavbar";
 import { bookCategories } from "../utils";
-import type { StoryRequest } from "../types/types";
+import type { StoryRequest, StoryResponse} from "../types/types";
 import { useCreateStoryMutation } from "../services/storyApi";
 import { useNavigate } from "react-router-dom";
 
@@ -12,21 +12,18 @@ function NewProject() {
     formState: { errors },
   } = useForm<StoryRequest>();
 
-  const [createStory, {data,  isError, isSuccess }] = useCreateStoryMutation()
+  const [createStory] = useCreateStoryMutation()
   const navigate = useNavigate()
 
-  const onSubmit = (dataForm: StoryRequest) => {
-    console.log("Form data:", dataForm);
+  const onSubmit = async (dataForm: StoryRequest) => {
+   try {
+    
+    const newStory : StoryResponse = await createStory(dataForm).unwrap()
 
-   createStory(dataForm)
-
-    if (isSuccess) {
-      navigate(`/editor/${data.id}`)
-    }
-
-    if (isError) {
-      console.log(data)
-    }
+    navigate(`/editor/${newStory.id}`)
+   } catch (error) {
+    
+   }
   };
 
   return (

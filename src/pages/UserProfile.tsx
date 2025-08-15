@@ -3,7 +3,6 @@ import { Link, useNavigate } from "react-router-dom";
 import type { RootSatate } from "../store/store";
 import { useGetUserStoriesQuery } from "../services/storyApi";
 import { useMemo } from "react";
-import DropdownMenu from "../components/DropdownMenu";
 import StoryDetails from "../components/StoryDetails";
 
 export default function UserProfile() {
