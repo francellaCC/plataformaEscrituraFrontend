@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import DropdownMenu from '../components/DropdownMenu';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
+import { useGetAllChaptersQuery } from '../services/chapterApi';
 
 export default function StoryEditor() {
 
@@ -11,7 +12,11 @@ export default function StoryEditor() {
   const [activeTab, setActiveTab] = useState(tab);
 
   const storyId = searchParams.get('idStory')
+  const idStory = storyId ? parseInt(storyId) : 0;
 
+  const { data: chapters = [] } = useGetAllChaptersQuery(idStory)
+
+  console.log('chapters', chapters)
   const menuOptions = [
     {
       label: "Vista Previa",
@@ -87,25 +92,33 @@ export default function StoryEditor() {
 
       {activeTab === "tabla" && (
         <div className="bg-white shadow rounded-lg p-6">
-          <h2 className="text-lg font-semibold mb-4">Capítulos</h2>
-          <div className="space-y-2">
-            <div className="flex items-center justify-between p-3 border rounded-lg">
-              <div>
-                <p className="font-medium"><Link to={'/editor/:idStory'}>Este es un nuevo cap</Link></p>
-                <span className="text-xs text-gray-500">
-                  Borrador - ago. 08, 2025
-                </span>
-              </div>
-              <div className="text-sm text-gray-500">
-
-                <DropdownMenu options={menuOptions} />
-              </div>
-
-            </div>
+          <div className='flex flex-row justify-between'>
+            <h2 className="text-lg font-semibold mb-4">Capítulos</h2>
+            <button className="mb-4 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600" onClick={() => navigate(`/editor/${storyId}`)}>
+              + Parte Nueva
+            </button>
           </div>
-          <button className="mt-4 bg-orange-500 text-white px-4 py-2 rounded-lg hover:bg-orange-600" onClick={() => navigate(`/editor/${storyId}`)}>
-            + Parte Nueva
-          </button>
+          {
+            chapters.map(chapter => (
+              <div className="space-y-2 mb-4" key={chapter.idChapter}>
+                <div className="flex items-center justify-between p-3 border rounded-lg">
+                  <div>
+                    <p className="font-medium"><Link to={`/editor/${storyId}/${chapter.idChapter}`}>{chapter.title}</Link></p>
+                    <span className="text-xs text-gray-500">
+                      Borrador {chapter.createdAt}
+                    </span>
+                  </div>
+                  <div className="text-sm text-gray-500">
+
+                    <DropdownMenu options={menuOptions} />
+                  </div>
+
+                </div>
+              </div>
+            ))
+          }
+
+
         </div>
       )}
     </div>
