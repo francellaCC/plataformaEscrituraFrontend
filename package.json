@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.3.0",
+    "@headlessui/react": "^0.0.0-insiders.2de2779",
+    "@heroicons/react": "^2.2.0",
     "@reduxjs/toolkit": "^2.8.2",
     "flowbite": "^3.1.2",
     "json-server": "^1.0.0-beta.3",

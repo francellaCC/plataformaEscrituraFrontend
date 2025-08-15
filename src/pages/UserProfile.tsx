@@ -3,16 +3,17 @@ import { Link, useNavigate } from "react-router-dom";
 import type { RootSatate } from "../store/store";
 import { useGetUserStoriesQuery } from "../services/storyApi";
 import { useMemo } from "react";
+import DropdownMenu from "../components/DropdownMenu";
+import StoryDetails from "../components/StoryDetails";
 
 export default function UserProfile() {
 
-  const { data: stories =[], isLoading, error } = useGetUserStoriesQuery();
+  const { data: stories = [], isLoading, error } = useGetUserStoriesQuery();
   const user = useSelector((state: RootSatate) => state.auth.user)
-  const drafStories = useMemo(()=> { return stories.filter(story => story.status === "in_progress" ).length},[stories])
+  const drafStories = useMemo(() => { return stories.filter(story => story.status === "in_progress").length }, [stories])
   console.log(user)
   const navigate = useNavigate()
 
-  console.log(stories)
   return (
     <div>
       <div className="flex items-center flex-col">
@@ -53,15 +54,10 @@ export default function UserProfile() {
           </div>
           {
             stories?.length > 0 ? (
-              stories?.map(story =>(
-                <div className="mt-8 ">
-                <div className="flex  gap-5">
-                  <div className="w-40 h-52">
-                    <img className="w-40 h-52 blur-sm" src={user.picture} alt="portada del libro" />
-                  </div>
-                  <Link className="mt-2 font-semibold" to={`/editor/${story.id}`}>{story.title}</Link>
+              stories?.map(story => (
+                <div className="mt-8 " key={story.id}>
+                  <StoryDetails story={story} picture={user.picture}/>
                 </div>
-              </div>
               ))
             ) : (
               <div className=" p-6 text-center ">
