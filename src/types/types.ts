@@ -1,39 +1,45 @@
-export type User ={
+export type User = {
   name: string,
-  nickname:string,
+  nickname: string,
   picture: string | null,
 
 }
 
 
-export interface StoryRequest{
+export interface StoryRequest {
   title: string;
   description: string;
-  genre:string;
-  coverImageUrl?:string;
+  genre: string;
+  coverImageUrl?: string;
   visibility: 'piblic' | "private";
   status: 'in_progress' | 'completed'
 }
 
-export interface StoryResponse{
+export interface StoryResponse {
   id: string;
   title: string,
   description: string;
   genre: string;
-  coverImageUrl:string;
+  coverImageUrl: string;
   visibility: string;
   status: string;
   createdAt: string;
 }
 
-export interface ChapterRequest{
-  title:string
+export interface ChapterRequest {
+  title: string
 }
 
-export interface ChapterResponse{
-  idChapter:number;
+export interface ChapterResponse {
+  idChapter: number;
   title: string;
   createdAt: string
+}
+
+export interface ChapterWithPages {
+  idChapter: number;
+  title: string;
+  pages: PageResponse[];
 }
 
 export interface TextCell {
@@ -44,8 +50,8 @@ export interface TextCell {
 
 
 export interface PageRequest {
-  content: string;      
-  pageNumber: number;   
+  content: string;
+  pageNumber: number;
 }
 
 
@@ -54,5 +60,5 @@ export interface PageResponse {
   content: string;
   pageNumber: number;
   chapterId: number;
-  createdAt: string; 
+  createdAt: string;
 }
