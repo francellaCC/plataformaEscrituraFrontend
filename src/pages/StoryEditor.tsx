@@ -103,7 +103,7 @@ export default function StoryEditor() {
               <div className="space-y-2 mb-4" key={chapter.idChapter}>
                 <div className="flex items-center justify-between p-3 border rounded-lg">
                   <div>
-                    <p className="font-medium"><Link to={`/editor/${storyId}/${chapter.idChapter}`}>{chapter.title}</Link></p>
+                    <p className="font-medium"><Link to={`/editor/${idStory}/${chapter.idChapter}`}>{chapter.title}</Link></p>
                     <span className="text-xs text-gray-500">
                       Borrador {chapter.createdAt}
                     </span>

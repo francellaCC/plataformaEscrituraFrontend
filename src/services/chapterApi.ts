@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQuery } from "./authApi";
-import type { ChapterResponse, ChapterRequest } from "../types/types";
+import type { ChapterResponse, ChapterRequest, ChapterWithPages } from "../types/types";
 
 
 export const chapterApi = createApi({
@@ -26,8 +26,14 @@ export const chapterApi = createApi({
         url: `/chapter/getChapters/${storyId}`,
         method:'GET'
       })
+    }),
+    getChapterById: builder.query<ChapterWithPages, {storyId: number; chapterId: number}>({
+      query: ({ storyId, chapterId }) => ({
+        url: `/chapter/getChapter/${storyId}/${chapterId}`,
+        method: 'GET'
+      })
     })
   })
 })
 
-export const { useCreateChapterMutation, useUpdateChapterMutation , useGetAllChaptersQuery} = chapterApi;
+export const { useCreateChapterMutation, useUpdateChapterMutation , useGetAllChaptersQuery, useGetChapterByIdQuery} = chapterApi;
