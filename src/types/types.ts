@@ -46,6 +46,8 @@ export interface TextCell {
   id: string;
   content: string;
   isEditing: boolean;
+  pageId?: number;
+  pageNumber?: number;
 }
 
 

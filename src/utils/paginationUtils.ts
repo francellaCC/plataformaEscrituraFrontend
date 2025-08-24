@@ -5,6 +5,7 @@ const MAX_CHARACTERS_PER_PAGE = 100;
 interface Page {
   number: number;
   cells: TextCell[];
+  id?: number; // id de la página del backend
 }
 
 export function groupCellsIntoPages(cells: TextCell[]): Page[] {
@@ -13,22 +14,42 @@ export function groupCellsIntoPages(cells: TextCell[]): Page[] {
   let currentCharCount = 0;
   let pageNumber = 1;
 
+  // Mapear pageNumber -> pageId de las celdas existentes
+  const pageIdMap = new Map<number, number>();
+  cells.forEach(cell => {
+    if (cell.pageId !== undefined && cell.pageNumber !== undefined) {
+      pageIdMap.set(cell.pageNumber, cell.pageId);
+    }
+  });
+
   for (const cell of cells) {
-    const plainText = cell.content.replace(/<[^>]*>?/gm, ''); // remove HTML tags
+    const plainText = cell.content.replace(/<[^>]*>?/gm, ''); // eliminar HTML tags
     const cellLength = plainText.length;
 
     if (currentCharCount + cellLength > MAX_CHARACTERS_PER_PAGE && currentCells.length > 0) {
-      pages.push({ number: pageNumber++, cells: currentCells });
+      // crear página
+      pages.push({
+        number: pageNumber,
+        cells: currentCells,
+        id: pageIdMap.get(pageNumber), // mantener el id si existía
+      });
+
       currentCells = [cell];
       currentCharCount = cellLength;
+      pageNumber++;
     } else {
       currentCells.push(cell);
       currentCharCount += cellLength;
     }
   }
 
+  // última página
   if (currentCells.length > 0) {
-    pages.push({ number: pageNumber, cells: currentCells });
+    pages.push({
+      number: pageNumber,
+      cells: currentCells,
+      id: pageIdMap.get(pageNumber),
+    });
   }
 
   return pages;
