@@ -10,6 +10,7 @@ import AuthCheck from "./components/AuthCheck";
 import UserProfile from "./pages/UserProfile";
 import ProyectsLayout from "./layouts/ProyectsLayout";
 import StoryEditor from "./pages/StoryEditor";
+import EditPageContent from "./pages/EditPageContent";
 
 
 export default function Router() {
@@ -42,6 +43,7 @@ export default function Router() {
           <Route path="/newProject" element={<NewProject />} />
           <Route path="/storyEdit" element={<StoryEditor/>}/>
           <Route path="/editor/:idStory" element={<BookEditor />} />
+          <Route path="/stories/:idStory/:idCahpter/edit" element={<EditPageContent/>}/>
 
         </Route>
         <Route path="/auth/login" element={<Login />} />
