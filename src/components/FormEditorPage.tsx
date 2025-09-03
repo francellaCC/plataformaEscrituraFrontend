@@ -25,6 +25,11 @@ export default function FormEditorPage({
   const cellRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const editorRef = useRef<Record<string, Editor | null>>({});
 
+  useEffect(() => {
+    setCells(initialCells); // actualizar cells si cambian los chunks
+  }, [initialCells]);
+
+  console.log(initialCells)
   const addCell = () => {
     const id = crypto.randomUUID();
     setCells((prev) =>
@@ -79,7 +84,7 @@ export default function FormEditorPage({
       pages.map((page) => ({
         pageNumber: page.number,
         content: page.cells.map((c) => c.content).join('\n'),
-        id : page.id
+        id: page.id
       })),
       title
     );

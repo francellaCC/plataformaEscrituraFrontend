@@ -1,6 +1,7 @@
 import type { TextCell } from "../types/types";
 
-const MAX_CHARACTERS_PER_PAGE = 100;
+const MAX_CHARACTERS_PER_PAGE = 1000;
+const IMAGE_WEIGHT =500;
 
 interface Page {
   number: number;
@@ -24,8 +25,13 @@ export function groupCellsIntoPages(cells: TextCell[]): Page[] {
 
   for (const cell of cells) {
     const plainText = cell.content.replace(/<[^>]*>?/gm, ''); // eliminar HTML tags
-    const cellLength = plainText.length;
+  
 
+    //contar imagenes del html
+    const imageMatches = cell.content.match(/<img\s+[^>]*src=["'][^"']+["'][^>]*>/gi) || [];
+    const imageWeigth = imageMatches.length * IMAGE_WEIGHT;
+
+    const cellLength = plainText.length + imageWeigth;
     if (currentCharCount + cellLength > MAX_CHARACTERS_PER_PAGE && currentCells.length > 0) {
       // crear página
       pages.push({
