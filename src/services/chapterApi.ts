@@ -27,7 +27,7 @@ export const chapterApi = createApi({
         method:'GET'
       })
     }),
-    getChapterById: builder.query<ChapterWithPages, {storyId: number; chapterId: number}>({
+    getChapterById: builder.query<ChapterResponse, {storyId: number; chapterId: number}>({
       query: ({ storyId, chapterId }) => ({
         url: `/chapter/getChapter/${storyId}/${chapterId}`,
         method: 'GET'

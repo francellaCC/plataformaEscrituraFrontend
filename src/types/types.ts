@@ -64,3 +64,8 @@ export interface PageResponse {
   chapterId: number;
   createdAt: string;
 }
+
+export interface PaginatedPages{
+  pages: PageResponse[],
+  total: number
+}
