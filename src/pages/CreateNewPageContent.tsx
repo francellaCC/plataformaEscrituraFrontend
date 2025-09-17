@@ -3,6 +3,7 @@ import { useCreateChapterMutation } from '../services/chapterApi';
 import { useCreatePageMutation } from '../services/pageApi';
 import { useGetStoryByIdQuery } from '../services/storyApi';
 import FormEditorPage from '../components/FormEditorPage';
+import type { ChapterResponse, PageResponse } from '../types/types';
 
 
 export default function CreateNewPageContent() {
@@ -13,21 +14,24 @@ export default function CreateNewPageContent() {
   const [createChapter] = useCreateChapterMutation();
   const [createPage] = useCreatePageMutation();
 
-  const handleSubmit = async (pages: { pageNumber: number; content: string }[], title: string) => {
-    const newChapter = await createChapter({ storyId, data: { title } }).unwrap();
+  const handleSubmit = async (pages: { pageNumber: number; content: string , id?: number}[], chapterId : ChapterResponse['idChapter']) => {
+    const responses : PageResponse[] = []
 
     for (const page of pages) {
-      await createPage({
+      const response = await createPage({
         storyId,
-        chapterId: newChapter.idChapter,
+        chapterId,
         data: page,
       }).unwrap();
+      responses.push(response)
     }
+
+    return responses
   };
 
   return (
     <FormEditorPage
-      storyTitle={story?.title}
+    
       onSubmit={handleSubmit}
     />
   );

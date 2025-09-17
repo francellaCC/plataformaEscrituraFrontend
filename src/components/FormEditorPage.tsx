@@ -2,20 +2,27 @@ import { useEffect, useRef, useState } from 'react';
 import { Editor } from 'primereact/editor';
 import { Button } from 'primereact/button';
 import Swal from 'sweetalert2';
-import type { TextCell } from '../types/types';
+import type { ChapterResponse, PageResponse, TextCell } from '../types/types';
 import { groupCellsIntoPages } from '../utils/paginationUtils';
+import { s3Api } from '../services/s3Api';
+import { CellRenderer } from './CellRenderer';
+
+import { useCreateChapterMutation, useUpdateChapterMutation } from '../services/chapterApi';
+import { useParams } from 'react-router-dom';
+import { useGetStoryByIdQuery } from '../services/storyApi';
+
 
 type FormEditorPageProps = {
-  storyTitle?: string;
   initialTitle?: string;
   initialCells?: TextCell[];
-  onSubmit: (pages: { pageNumber: number; content: string }[], title: string) => Promise<void>;
+  IdChapter?: number;
+  onSubmit: (pages: { pageNumber: number; content: string, id?: number }[], chapterId: number) => Promise<PageResponse[]>;
 };
 
 export default function FormEditorPage({
-  storyTitle,
   initialTitle = 'Parte 1',
   initialCells = [],
+  IdChapter,
   onSubmit,
 }: FormEditorPageProps) {
   const [cells, setCells] = useState<TextCell[]>(initialCells);
@@ -25,11 +32,85 @@ export default function FormEditorPage({
   const cellRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const editorRef = useRef<Record<string, Editor | null>>({});
 
+  const [uploadImagePresigned] = s3Api.useLazyUploadImagePresignedQuery();
+
+  const { idStory } = useParams();
+  const storyId = idStory ? parseInt(idStory) : 0;
+  const { data: story } = useGetStoryByIdQuery(storyId!);
+  const [chapterId, setCahpterId] = useState<number>(IdChapter! > 0 ? IdChapter! : 0)
+  const [createChapter] = useCreateChapterMutation()
+  const [updateChapter, { data: chapterUpdate }] = useUpdateChapterMutation()
+
+  const [savedPages, setSavedPages] = useState<PageResponse[]>([]);
+
   useEffect(() => {
-    setCells(initialCells); // actualizar cells si cambian los chunks
+    setCells(prevCells => {
+      const updated = savedPages.map(page => {
+        const existing = prevCells.find(c => c.pageNumber === page.pageNumber);
+        if (existing) {
+          return {
+            ...existing,
+            pageId: page.id,
+            content: page.content,
+          };
+        }
+        return {
+          id: crypto.randomUUID(),
+          content: page.content,
+          isEditing: false,
+          pageId: page.id,
+          pageNumber: page.pageNumber,
+        };
+      });
+      return updated;
+    });
+  }, [savedPages]);
+
+
+
+  useEffect(() => {
+    if (initialCells.length > 0) {
+      setCells(initialCells); // actualizar cells si cambian los chunks
+      console.log(initialCells)
+    }
+
   }, [initialCells]);
 
-  console.log(initialCells)
+
+
+  useEffect(() => {
+    if (!title.trim()) return; // Evita enviar si title está vacío
+
+
+    const timeoutId = setTimeout(async () => {
+
+      try {
+        if (!chapterId) {
+          // se crea el capitulo
+          const newChapter: ChapterResponse = await createChapter({
+            storyId,
+            data: { title }
+          }).unwrap();
+          console.log("cahpter", newChapter)
+          setCahpterId(newChapter.idChapter)
+        } else {
+          // se actualiza
+          await updateChapter({ storyId, chapterId, data: { title } }).unwrap()
+          console.log(chapterUpdate)
+        }
+      } catch (error) {
+        console.error("Error en creación/actualización de capítulo", error);
+      }
+      console.log("cahpterId", chapterId)
+
+    }, 1000); // espera 1000 ms (1 segundo)
+
+    // Cleanup: si el título cambia antes de los 1000 ms, cancela el anterior
+    return () => clearTimeout(timeoutId);
+  }, [title]);
+
+
+
   const addCell = () => {
     const id = crypto.randomUUID();
     setCells((prev) =>
@@ -79,26 +160,44 @@ export default function FormEditorPage({
   };
 
   const handleSavePages = async () => {
-    const pages = groupCellsIntoPages(cells);
-    await onSubmit(
+    // Adaptamos el trigger a una función que devuelva lo esperado
+    const getPresignedUrl = async ({ filename, contentType }: { filename: string; contentType: string }) => {
+      const result = await uploadImagePresigned({ filename, contentType }).unwrap();
+      return result;
+    };
+
+    console.log("cells antes de groupCellsIntoPages", cells)
+    const pages = await groupCellsIntoPages(cells, getPresignedUrl);
+
+
+    console.log("pages despues de groupCellsIntoPages", pages)
+    const saved = await onSubmit(
       pages.map((page) => ({
         pageNumber: page.number,
-        content: page.cells.map((c) => c.content).join('\n'),
-        id: page.id
+        content: page.cells.map((c) => c.content).join("\n"),
+        id: page.id,
       })),
-      title
+      chapterId!
     );
 
-    console.log(pages[0].id)
-    Swal.fire('¡Páginas preparadas!', `Se generaron ${pages.length} páginas.`, 'success');
+    console.log(saved)
+    setSavedPages(saved)
+
+
+    Swal.fire(
+      "¡Páginas preparadas!",
+      `Se generaron ${pages.length} páginas.`,
+      "success"
+    );
   };
+
 
   return (
     <div className="bg-gray-100 min-h-screen">
       {/* Header */}
       <div className="w-full flex items-center justify-between px-6 py-4 border-b bg-white sticky top-0 z-40">
         <div>
-          <label className="text-sm text-gray-500">{storyTitle}</label>
+          <label className="text-sm text-gray-500">{story?.title}</label>
           <input
             type="text"
             value={title}
@@ -157,10 +256,13 @@ export default function FormEditorPage({
                   </div>
                 ) : (
                   <>
-                    <div
+                    {/* <div
                       className="prose max-w-none break-words whitespace-pre-wrap"
                       dangerouslySetInnerHTML={{ __html: cell.content }}
-                    />
+                    /> */}
+
+                    <CellRenderer cell={cell} />
+
                     <div className="absolute right-6 top-4 hidden group-hover:flex gap-2">
                       <button
                         onClick={() => setEditingCellId(cell.id)}

@@ -48,10 +48,12 @@ export interface TextCell {
   isEditing: boolean;
   pageId?: number;
   pageNumber?: number;
+  localImages?: { file: File; previewUrl: string }[]; //para manejar las imagenes antes de subirlas a S3
 }
 
 
 export interface PageRequest {
+  id?: number ;
   content: string;
   pageNumber: number;
 }

@@ -1,12 +1,12 @@
 import { useParams } from 'react-router-dom';
 
-import { useGetChapterByIdQuery, useUpdateChapterMutation } from '../services/chapterApi';
+import { useGetChapterByIdQuery } from '../services/chapterApi';
 import { useCreatePageMutation, useGetPagesByChapterIdQuery, useUpdatePageMutation } from '../services/pageApi';
 
-import type { TextCell } from '../types/types';
-import type { ChapterWithPages } from '../types/types';
+import type { ChapterResponse, PageResponse, TextCell } from '../types/types';
+
 import FormEditorPage from '../components/FormEditorPage';
-import { useGetStoryByIdQuery } from '../services/storyApi';
+
 import { useCallback, useEffect, useRef, useState } from 'react';
 
 export default function EditPageContent() {
@@ -18,7 +18,6 @@ export default function EditPageContent() {
   const [cells, setCells] = useState<TextCell[]>([]);
   const [totalPages, setTotalPages] = useState(0)
 
-  const { data: story } = useGetStoryByIdQuery(storyId);
 
   const { data: chapterData } = useGetChapterByIdQuery({ storyId, chapterId });
 
@@ -52,7 +51,6 @@ export default function EditPageContent() {
         if (cells.length < totalPages) {
           setOffset((prev) => prev + LIMIT)
         }
-
       }
     });
 
@@ -62,32 +60,32 @@ export default function EditPageContent() {
 
   const handleSubmit = async (
     pages: { pageNumber: number; content: string, id?: number }[],
-    title: string
+    IdChapter: ChapterResponse['idChapter']
   ) => {
+
+    const responses: PageResponse[] = []
     for (const page of pages) {
+      console.log(page)
+      console.log(page.id)
       if (page.id) {
-      
-          await updatePage({
-            storyId,
-            chapterId: chapterData?.idChapter!,
-            pageId: page.id!,
-            data: page,
-          }).unwrap();
-        
+        const resesponse = await updatePage({
+          storyId,
+          chapterId: IdChapter!,
+          pageId: page.id!,
+          data: page,
+        }).unwrap();
+        responses.push(resesponse)
       } else {
-        
-          await createPage({
-            storyId,
-            chapterId: chapterData?.idChapter!,
-            data: page,
-          }).unwrap();
-        
+        const resesponse = await createPage({
+          storyId,
+          chapterId: IdChapter!,
+          data: page,
+        }).unwrap();
+        responses.push(resesponse)
       }
     }
 
-    // Guardar/actualizar páginas
-    console.log(title, pages)
-
+    return responses
   };
 
   if (!chapterData) return <p>Cargando capítulo...</p>;
@@ -95,9 +93,9 @@ export default function EditPageContent() {
   return (
     <div >
       <FormEditorPage
-        storyTitle={story?.title}
         initialCells={cells}
         initialTitle={chapterData.title}
+        IdChapter={chapterId}
         onSubmit={handleSubmit}
       />
       {/* Marcador invisible para el observer */}

@@ -24,10 +24,10 @@ export const chapterApi = createApi({
     getAllChapters: builder.query<ChapterResponse[], number>({
       query: (storyId) => ({
         url: `/chapter/getChapters/${storyId}`,
-        method:'GET'
+        method: 'GET'
       })
     }),
-    getChapterById: builder.query<ChapterResponse, {storyId: number; chapterId: number}>({
+    getChapterById: builder.query<ChapterResponse, { storyId: number; chapterId: number }>({
       query: ({ storyId, chapterId }) => ({
         url: `/chapter/getChapter/${storyId}/${chapterId}`,
         method: 'GET'
@@ -36,4 +36,4 @@ export const chapterApi = createApi({
   })
 })
 
-export const { useCreateChapterMutation, useUpdateChapterMutation , useGetAllChaptersQuery, useGetChapterByIdQuery} = chapterApi;
+export const { useCreateChapterMutation, useUpdateChapterMutation, useGetAllChaptersQuery, useGetChapterByIdQuery } = chapterApi;
