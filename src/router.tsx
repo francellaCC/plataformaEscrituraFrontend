@@ -1,6 +1,5 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
-import BookEditor from "./pages/Editor";
 import NewProject from "./pages/NewProject";
 import MyWorks from "./pages/MyWorks";
 import { Auth0Provider } from "@auth0/auth0-react";
@@ -11,6 +10,7 @@ import UserProfile from "./pages/UserProfile";
 import ProyectsLayout from "./layouts/ProyectsLayout";
 import StoryEditor from "./pages/StoryEditor";
 import EditPageContent from "./pages/EditPageContent";
+import CreateNewPageContent from "./pages/CreateNewPageContent";
 
 
 export default function Router() {
@@ -42,7 +42,7 @@ export default function Router() {
         <Route element={<ProyectsLayout />}>
           <Route path="/newProject" element={<NewProject />} />
           <Route path="/storyEdit" element={<StoryEditor/>}/>
-          <Route path="/editor/:idStory" element={<BookEditor />} />
+          <Route path="/editor/:idStory" element={<CreateNewPageContent />} />
           <Route path="/stories/:idStory/:idCahpter/edit" element={<EditPageContent/>}/>
 
         </Route>
