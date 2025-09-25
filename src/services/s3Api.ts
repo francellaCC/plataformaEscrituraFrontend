@@ -16,8 +16,15 @@ export const s3Api = createApi({
         method: "POST",
         body: keys
       }),
+    }),
+    getProfileImagePresigned: builder.query<{ key: string; url: string }, string>({
+      query: (key) => ({
+        url: "/upload/presigned/read",
+        method: "POST",
+        body: {key}
+      })
     })
   })
 })
 
-export const { useUploadImagePresignedQuery, useGetImagePresignedQuery } = s3Api
+export const { useUploadImagePresignedQuery, useGetImagePresignedQuery, useGetProfileImagePresignedQuery } = s3Api

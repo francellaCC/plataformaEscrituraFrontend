@@ -14,16 +14,20 @@ export default function AuthCheck() {
   const [hasCalledLogin, setHasCalledLogin] = useState(false);
   const dispatch = useDispatch()
 
+  console.log("data" , data)
+
   useEffect(() => {
     const doLogin = async () => {
       if (isAuthenticated && user && !hasCalledLogin) {
         const token = await getAccessTokenSilently();
 
-        console.log(user)
+        console.log("user",user)
         dispatch(setAuthState({ user, token }));
         const userData = {
           nameUser: user.name,
-          email: user.email
+          email: user.email,
+          nickname: user.nickname,
+          picture: user.picture
         }
         login(userData);
         setHasCalledLogin(true);
