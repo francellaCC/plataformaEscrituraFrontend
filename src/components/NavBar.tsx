@@ -1,54 +1,107 @@
+import { ChevronDownIcon, MagnifyingGlassIcon } from "@heroicons/react/24/outline";
+import { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
+import type { RootSatate } from "../store/store";
+import ProfilePicture from "./ProfilePicture";
+import { useNavigate } from "react-router-dom";
 
 
 function NavBar() {
+
+  const user = useSelector((state: RootSatate) => state.auth.user);
+  const navigate = useNavigate()
+ const [openWrite, setOpenWrite] = useState(false);
+  const [openProfile, setOpenProfile] = useState(false);
+
+  const writeRef = useRef<HTMLDivElement>(null);
+  const profileRef = useRef<HTMLDivElement>(null);
+
+  console.log(user)
+  // Simulación de usuario
+
+
+  // 🔹 Cerrar dropdowns cuando hago clic fuera
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (
+        writeRef.current &&
+        !writeRef.current.contains(event.target as Node)
+      ) {
+        setOpenWrite(false);
+      }
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(event.target as Node)
+      ) {
+        setOpenProfile(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
-    <nav className=" border-b">
-      <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
+    <nav className="w-full bg-white shadow-md px-6 py-3 flex items-center justify-between">
+      {/* Logo */}
+      <div className="flex items-center gap-2">
+        <img src="/logo.png" alt="Logo" className="w-10 h-10" />
+        <span className="text-lg font-bold">Plataforma Escritura</span>
+      </div>
 
-        <div className="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
-          <button type="button" className="flex text-sm bg-gray-800 rounded-full md:me-0 focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600" id="user-menu-button" aria-expanded="false" data-dropdown-toggle="user-dropdown" data-dropdown-placement="bottom">
-            <span className="sr-only">Open user menu</span>
-            <img className="w-8 h-8 rounded-full" src='/img/image.png' alt="user photo" />
+      {/* Buscador */}
+      <div className="flex items-center border rounded-lg px-3 py-1 w-96">
+        <MagnifyingGlassIcon className="h-5 w-5 text-gray-500" />
+        <input
+          type="text"
+          placeholder="Buscar..."
+          className="ml-2 w-full outline-none text-sm"
+        />
+      </div>
+
+      {/* Opciones de la derecha */}
+      <div className="flex items-center gap-6 relative">
+        {/* Dropdown Escribir */}
+        <div className="relative" ref={writeRef}>
+          <button
+            onClick={() => setOpenWrite((prev) => !prev)}
+            className="flex items-center gap-1 hover:text-orange-600 transition"
+          >
+            Escribir <ChevronDownIcon className="w-4 h-4" />
           </button>
-
-          <div className="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-lg shadow-sm dark:bg-gray-700 dark:divide-gray-600" id="user-dropdown">
-            <div className="px-4 py-3">
-              <span className="block text-sm text-gray-900 dark:text-white">Bonnie Green</span>
-              <span className="block text-sm  text-gray-500 truncate dark:text-gray-400">name@flowbite.com</span>
+          {openWrite && (
+            <div className="absolute mt-2 right-0 bg-white border shadow-lg rounded-lg w-48">
+              <button className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100" onClick={()=>navigate("/newProject")}>
+                ✍️ Nueva historia
+              </button>
+              <button className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100" onClick={()=> navigate("/myworks")}>
+                📚 Mis historias
+              </button>
             </div>
-            <ul className="py-2" aria-labelledby="user-menu-button">
-              <li>
-                <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Dashboard</a>
-              </li>
-              <li>
-                <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Settings</a>
-              </li>
-              <li>
-                <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Earnings</a>
-              </li>
-              <li>
-                <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</a>
-              </li>
-            </ul>
-          </div>
-          <button data-collapse-toggle="navbar-user" type="button" className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600" aria-controls="navbar-user" aria-expanded="false">
-            <span className="sr-only">Open main menu</span>
-            <svg className="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 17 14">
-              <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M1 1h15M1 7h15M1 13h15" />
-            </svg>
-          </button>
+          )}
         </div>
-        <div className="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-user">
-          <ul className="flex flex-col font-medium p-4 md:p-0 mt-4  md:space-x-8 rtl:space-x-reverse md:flex-row   ">
-            <li>
-              <a href="/" className=" text-black  " aria-current="page">Home</a>
-            </li>
 
-          </ul>
+        {/* Dropdown Perfil */}
+        <div className="relative" ref={profileRef}>
+          <button
+            onClick={() => setOpenProfile((prev) => !prev)}
+            className="flex items-center gap-2"
+          >
+            <ProfilePicture picture={user?.picture!} width="w-8"  height="h-8"/>
+            <ChevronDownIcon className="w-4 h-4" />
+          </button>
+          {openProfile && (
+            <div className="absolute mt-2 right-0 bg-white border shadow-lg rounded-lg w-48">
+              <button className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100" onClick={()=>navigate("/user/userProfile")}>
+                👤 Ir al perfil
+              </button>
+              <button className="block w-full text-left px-4 py-2 text-sm hover:bg-gray-100">
+                🚪 Cerrar sesión
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </nav>
-
   );
 };
 

@@ -1,9 +1,9 @@
 import React from 'react'
 import { useGetProfileImagePresignedQuery } from '../services/s3Api';
 
-export default function ProfilePicture({picture}:{picture:string}) {
+export default function ProfilePicture({picture, width, height}:{picture:string, width: string, height: string}) {
   if(!picture){
-    return <img src="image.png" className="w-24 h-24 rounded-full object-cover border" />;
+    return <img src="image.png" className={`${width} ${height} rounded-full object-cover border`} />;
   }
 
   // detectar si la imagen pertenece a s3 o no
@@ -14,5 +14,5 @@ export default function ProfilePicture({picture}:{picture:string}) {
   const {data, isSuccess} = useGetProfileImagePresignedQuery(picture,{skip: !isFromS3})
   const src = isFromS3 ? (isSuccess ? data?.url : "image.png") : picture;
 
-  return <img className="w-24 h-24 rounded-full object-cover border" src={src} />;
+  return <img className={`${width} ${height} rounded-full object-cover border`} src={src} />;
 }

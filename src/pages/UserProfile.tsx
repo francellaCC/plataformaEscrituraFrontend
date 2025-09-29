@@ -1,4 +1,4 @@
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import type { RootSatate } from "../store/store";
 import { useGetUserStoriesQuery } from "../services/storyApi";
@@ -6,28 +6,30 @@ import { useMemo, useState } from "react";
 import StoryDetails from "../components/StoryDetails";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
 import ProfileConfigModal from "../components/ConfigUserPerfil";
-import { useGetProfileQuery, useUpdatePerfileMutation } from "../services/authApi";
+import { useUpdatePerfileMutation } from "../services/authApi";
 import type { UserRequest } from "../types/types";
 import ProfilePicture from "../components/ProfilePicture";
+import { updateUser } from "../store/slice/authSlice";
 
 export default function UserProfile() {
 
   const [open, setOpen] = useState<boolean>(false)
-  const {data: userDb, isLoading } = useGetProfileQuery()
   const { data: stories = []} = useGetUserStoriesQuery();
   const user = useSelector((state: RootSatate) => state.auth.user)
   const drafStories = useMemo(() => { return stories.filter(story => story.status === "in_progress").length }, [stories])
+  const dispatch = useDispatch()
   const [updatePerfile] = useUpdatePerfileMutation()
   console.log(user)
   const navigate = useNavigate()
 
   const handleSave = async (data: UserRequest) => {
     console.log("Datos guardados:", data);
-    await updatePerfile(data).unwrap()
+    const updatedUser = await updatePerfile(data).unwrap()
+
+    dispatch(updateUser(updatedUser))
    
   };
 
-  if(isLoading) return "Cargando el perfil"
   return (
     <div className="min-h-screen relative">
       <div className="absolute right-64" >
@@ -37,11 +39,11 @@ export default function UserProfile() {
       </div>
       <div className="flex items-center flex-col">
         <div >
-          <ProfilePicture picture={userDb?.picture!} />
+          <ProfilePicture picture={user?.picture!} width="w-24" height="h-24"/>
         </div>
 
-        <p>{userDb?.name}</p>
-        <p>@{userDb?.nickname}</p>
+        <p>{user?.name}</p>
+        <p>@{user?.nickname}</p>
 
         <div className=" flex  flex-row gap-4">
           <p>0 Obras</p>
@@ -68,7 +70,7 @@ export default function UserProfile() {
             stories?.length > 0 ? (
               stories?.map(story => (
                 <div className="mt-8 " key={story.id}>
-                  <StoryDetails story={story} picture={userDb?.picture!} />
+                  <StoryDetails story={story} picture={user?.picture!} />
                 </div>
               ))
             ) : (
@@ -89,7 +91,7 @@ export default function UserProfile() {
             isOpen={open}
             onClose={() => setOpen(false)}
             onSave={handleSave}
-            initialData={userDb}
+            initialData={user!}
           />
         )
       }
