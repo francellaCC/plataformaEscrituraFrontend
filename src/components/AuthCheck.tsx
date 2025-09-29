@@ -5,36 +5,44 @@ import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { setAuthState } from "../store/slice/authSlice";
 
+
 export default function AuthCheck() {
 
-  const { isAuthenticated, user, isLoading, getAccessTokenSilently } = useAuth0();
+  const { isAuthenticated,user : userAuth0,  isLoading, getAccessTokenSilently } = useAuth0();
   const navigate = useNavigate();
 
-  const [login, { data, isSuccess, isError, error }] = useLoginMutation();
+  const [login, { data : user, isSuccess, isError, error }] = useLoginMutation();
   const [hasCalledLogin, setHasCalledLogin] = useState(false);
   const dispatch = useDispatch()
 
+  console.log("data" , userAuth0)
+
   useEffect(() => {
     const doLogin = async () => {
-      if (isAuthenticated && user && !hasCalledLogin) {
+      if (isAuthenticated && userAuth0 && !hasCalledLogin) {
         const token = await getAccessTokenSilently();
 
-        console.log(user)
-        dispatch(setAuthState({ user, token }));
+        console.log("user",user)
+       
         const userData = {
-          nameUser: user.name,
-          email: user.email
+          nameUser: userAuth0.name,
+          email: userAuth0.email,
+          nickname: userAuth0.nickname,
+          picture: userAuth0.picture
         }
-        login(userData);
+        const {data} = await login(userData);
+        console.log(data)
+         dispatch(setAuthState({ user:data, token }));
         setHasCalledLogin(true);
       }
     };
     doLogin();
-  }, [isAuthenticated, user, hasCalledLogin, login, getAccessTokenSilently, dispatch]);
+  }, [isAuthenticated, userAuth0, hasCalledLogin, login, getAccessTokenSilently, dispatch]);
 
   useEffect(() => {
     if (isSuccess) {
-      navigate("/user/userProfile")
+       console.log("data" , userAuth0)
+       navigate("/home")
     }
   }, [isSuccess, navigate])
   useEffect(() => {

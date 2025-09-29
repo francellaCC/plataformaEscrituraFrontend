@@ -5,6 +5,18 @@ export type User = {
 
 }
 
+export type UserRequest = {
+  id?: number,
+  name: string,
+  picture: string | null,
+}
+
+export type UserResponse = {
+  id?:number,
+  name: string,
+  nickname?: string,
+  picture: string | null,
+}
 
 export interface StoryRequest {
   title: string;

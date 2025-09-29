@@ -11,13 +11,7 @@ export const storyApi = createApi({
       query: (body) => ({
         url: '/stories/createStory',
         method: 'POST',
-        body: {
-          ...body,
-          coverImageUrl: 'fgdgdfg',
-          visibility: 'private',
-          status: 'in_progress',
-
-        }
+        body
       })
     }),
     getUserStories: builder.query<StoryResponse[], void>({
