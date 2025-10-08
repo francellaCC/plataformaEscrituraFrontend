@@ -1,15 +1,15 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import type { RootSatate } from "../store/store";
-import { useGetUserStoriesQuery } from "../services/storyApi";
+import type { RootSatate } from "../../store/store";
+import { useGetUserStoriesQuery } from "../../services/storyApi";
 import { useMemo, useState } from "react";
-import StoryDetails from "../components/StoryDetails";
+import StoryDetails from "../../components/StoryDetails";
 import { PencilSquareIcon } from "@heroicons/react/24/outline";
-import ProfileConfigModal from "../components/ConfigUserPerfil";
-import { useUpdatePerfileMutation } from "../services/authApi";
-import type { UserRequest } from "../types/types";
-import ProfilePicture from "../components/ProfilePicture";
-import { updateUser } from "../store/slice/authSlice";
+import ProfileConfigModal from "../../components/ConfigUserPerfil";
+import { useUpdatePerfileMutation } from "../../services/authApi";
+import type { UserRequest } from "../../types/types";
+import ProfilePicture from "../../components/ProfilePicture";
+import { updateUser } from "../../store/slice/authSlice";
 
 export default function UserProfile() {
 
@@ -70,7 +70,7 @@ export default function UserProfile() {
             stories?.length > 0 ? (
               stories?.map(story => (
                 <div className="mt-8 " key={story.id}>
-                  <StoryDetails story={story} picture={user?.picture!} />
+                  <StoryDetails story={story}  />
                 </div>
               ))
             ) : (

@@ -8,8 +8,10 @@ import { s3Api } from '../services/s3Api';
 import { CellRenderer } from './CellRenderer';
 
 import { useCreateChapterMutation, useUpdateChapterMutation } from '../services/chapterApi';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useGetStoryByIdQuery } from '../services/storyApi';
+import StoryPreview from '../pages/storys/StoryPreview';
+import EditorCell from './EditorCell';
 
 
 type FormEditorPageProps = {
@@ -38,10 +40,12 @@ export default function FormEditorPage({
   const storyId = idStory ? parseInt(idStory) : 0;
   const { data: story } = useGetStoryByIdQuery(storyId!);
   const [chapterId, setCahpterId] = useState<number>(IdChapter! > 0 ? IdChapter! : 0)
+  const [isPreview, setIsPreview] = useState<boolean>(false)
   const [createChapter] = useCreateChapterMutation()
   const [updateChapter, { data: chapterUpdate }] = useUpdateChapterMutation()
 
   const [savedPages, setSavedPages] = useState<PageResponse[]>([]);
+
 
   useEffect(() => {
     setCells(prevCells => {
@@ -73,7 +77,6 @@ export default function FormEditorPage({
       setCells(initialCells); // actualizar cells si cambian los chunks
       console.log(initialCells)
     }
-
   }, [initialCells]);
 
 
@@ -179,8 +182,6 @@ export default function FormEditorPage({
       })),
       chapterId!
     );
-
-    console.log(saved)
     setSavedPages(saved)
 
 
@@ -190,6 +191,8 @@ export default function FormEditorPage({
       "success"
     );
   };
+
+
 
 
   return (
@@ -207,83 +210,38 @@ export default function FormEditorPage({
           />
         </div>
         <div className="flex items-center gap-4">
-          <button className="bg-gray-700 text-white hover:bg-gray-950 px-4 py-2 rounded-lg">
-            Publicar
-          </button>
-          <button
-            className="border border-black text-black px-4 py-2 rounded-lg"
-            onClick={handleSavePages}
-          >
-            Guardar
-          </button>
-          <button disabled className="border border-black text-black px-4 py-2 rounded-lg ">
-            Vista previa
+          {
+            !isPreview && (
+
+              <div className=''>
+                <button className="bg-gray-700 text-white hover:bg-gray-950 px-4 py-2 rounded-lg mr-4">
+                  Publicar
+                </button>
+                <button
+                  className="border border-black text-black px-4 py-2 rounded-lg"
+                  onClick={handleSavePages}
+                >
+                  Guardar
+                </button>
+              </div>
+            )
+          }
+          <button className="border border-black text-black px-4 py-2 rounded-lg " onClick={() => setIsPreview(prev => !prev)}>
+            {isPreview ? "Seguir editando" : " Vista previa"}
           </button>
         </div>
       </div>
 
       {/* Editor */}
-      <div className="flex flex-col gap-6 w-full">
-        <div className="sticky top-[4.7rem] z-50 bg-white pb-4 pt-3 ">
-          <Button
-            icon="pi pi-plus"
-            label="Agregar Celda"
-            onClick={addCell}
-            className="self-start"
-          />
-        </div>
+      {
+        !isPreview ? (
+          <EditorCell addCell={addCell} cells={cells} cellRefs={cellRefs} editingCellId={editingCellId} updateContent={updateContent}
+            editorRef={editorRef} setEditingCellId={setEditingCellId} deleteCell={deleteCell} />
 
-        <div className="flex justify-center">
-          <div className="bg-white shadow-md rounded-lg px-8 py-10 max-w-[800px] w-full">
-            {cells.map((cell) => (
-              <div
-                key={cell.id}
-                ref={(el) => {
-                  cellRefs.current[cell.id] = el;
-                }}
-                className="group flex-row relative flex w-full items-start gap-4 px-6 py-4 border-b"
-              >
-                {editingCellId === cell.id ? (
-                  <div className="w-full">
-                    <Editor
-                      value={cell.content}
-                      onTextChange={(e) => updateContent(cell.id, e.htmlValue!)}
-                      ref={(el) => {
-                        editorRef.current[cell.id] = el;
-                      }}
-                      style={{ width: '650px', height: '200px' }}
-                    />
-                  </div>
-                ) : (
-                  <>
-                    {/* <div
-                      className="prose max-w-none break-words whitespace-pre-wrap"
-                      dangerouslySetInnerHTML={{ __html: cell.content }}
-                    /> */}
-
-                    <CellRenderer cell={cell} />
-
-                    <div className="absolute right-6 top-4 hidden group-hover:flex gap-2">
-                      <button
-                        onClick={() => setEditingCellId(cell.id)}
-                        className="text-sm text-blue-500 hover:cursor-pointer"
-                      >
-                        ✏️
-                      </button>
-                      <button
-                        onClick={() => deleteCell(cell.id)}
-                        className="text-sm text-red-500 hover:cursor-pointer"
-                      >
-                        🗑️
-                      </button>
-                    </div>
-                  </>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
+        ) : (
+          <StoryPreview  cells={cells} />
+        )
+      }
     </div>
   );
 }

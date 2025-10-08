@@ -1,9 +1,9 @@
 import { useParams } from 'react-router-dom';
-import { useCreateChapterMutation } from '../services/chapterApi';
-import { useCreatePageMutation } from '../services/pageApi';
-import { useGetStoryByIdQuery } from '../services/storyApi';
-import FormEditorPage from '../components/FormEditorPage';
-import type { ChapterResponse, PageResponse } from '../types/types';
+import { useCreateChapterMutation } from '../../services/chapterApi';
+import { useCreatePageMutation } from '../../services/pageApi';
+import { useGetStoryByIdQuery } from '../../services/storyApi';
+import FormEditorPage from '../../components/FormEditorPage';
+import type { ChapterResponse, PageResponse } from '../../types/types';
 
 
 export default function CreateNewPageContent() {
