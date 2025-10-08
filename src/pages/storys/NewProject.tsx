@@ -1,13 +1,13 @@
 import { useForm } from "react-hook-form";
-import EditorNavbar from "../components/EditorNavbar";
-import { bookCategories } from "../utils";
-import type { StoryRequest, StoryResponse } from "../types/types";
-import { useCreateStoryMutation } from "../services/storyApi";
+import EditorNavbar from "../../components/EditorNavbar";
+import { bookCategories } from "../../utils";
+import type { StoryRequest, StoryResponse } from "../../types/types";
+import { useCreateStoryMutation } from "../../services/storyApi";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import type { RootSatate } from "../store/store";
-import { s3Api, useGetProfileImagePresignedQuery } from "../services/s3Api";
+import type { RootSatate } from "../../store/store";
+import { s3Api, useGetProfileImagePresignedQuery } from "../../services/s3Api";
 
 function NewProject() {
   const {

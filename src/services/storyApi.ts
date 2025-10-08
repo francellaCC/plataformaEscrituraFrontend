@@ -1,6 +1,6 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
 import { baseQuery } from "./authApi";
-import { type StoryRequest, type StoryResponse } from "../types/types";
+import { type ChapterWithPages, type StoryRequest, type StoryResponse, type StoryWithUserInfo } from "../types/types";
 
 
 export const storyApi = createApi({
@@ -26,6 +26,12 @@ export const storyApi = createApi({
         method: 'GET'
       })
     }),
+    getStoryWithAuthor: builder.query<StoryWithUserInfo, number>({
+      query: (idStory) => ({
+        url: `/stories/storyAuthor/${idStory}`,
+        method: 'GET'
+      })
+    }),
     updateStory: builder.mutation<StoryResponse, { id: number; data: StoryRequest }>({
       query: ({ id, data }) => ({
         url: `/stories/update/${id}`,
@@ -39,8 +45,14 @@ export const storyApi = createApi({
         method: 'DELETE',
       }),
     }),
+    getFirstChapter: builder.query<ChapterWithPages, number>({
+      query: (storyId) => ({
+        url: `/chapter/${storyId}/first-chapter`,
+        method: 'GET'
+      })
+    })
   })
 })
 
 export const { useCreateStoryMutation, useGetUserStoriesQuery, useGetStoryByIdQuery, useUpdateStoryMutation,
-  useDeleteStoryMutation } = storyApi;
+  useDeleteStoryMutation, useGetFirstChapterQuery, useGetStoryWithAuthorQuery} = storyApi;

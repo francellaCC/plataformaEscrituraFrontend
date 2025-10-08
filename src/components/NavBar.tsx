@@ -16,11 +16,8 @@ function NavBar() {
   const writeRef = useRef<HTMLDivElement>(null);
   const profileRef = useRef<HTMLDivElement>(null);
 
-  console.log(user)
-  // Simulación de usuario
 
-
-  // 🔹 Cerrar dropdowns cuando hago clic fuera
+  // Cerrar dropdowns cuando hago clic fuera
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (

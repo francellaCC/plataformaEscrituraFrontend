@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import NavBar from '../components/NavBar'
+import NavBar from '../../components/NavBar'
 import { useNavigate } from 'react-router-dom'
 
 function MyWorks() {

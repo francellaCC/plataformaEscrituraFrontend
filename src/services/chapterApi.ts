@@ -32,8 +32,22 @@ export const chapterApi = createApi({
         url: `/chapter/getChapter/${storyId}/${chapterId}`,
         method: 'GET'
       })
-    })
+    }),
+    getNextChapter: builder.query<ChapterResponse, { storyId: number, currentChapter: number }>({
+      query: ({ storyId, currentChapter }) => ({
+        url: `/chapter/next/${storyId}/${currentChapter}`,
+        method: 'GET'
+      })
+    }),
+    getPreviousChapter: builder.query<ChapterResponse, { storyId: number, currentChapter: number }>({
+      query: ({ storyId, currentChapter }) => ({
+        url: `/chapter/previous/${storyId}/${currentChapter}`,
+        method: 'GET'
+      })
+    }),
   })
 })
 
-export const { useCreateChapterMutation, useUpdateChapterMutation, useGetAllChaptersQuery, useGetChapterByIdQuery } = chapterApi;
+export const { useCreateChapterMutation, useUpdateChapterMutation, useGetAllChaptersQuery, useGetChapterByIdQuery,
+  useGetNextChapterQuery, useLazyGetNextChapterQuery,
+  useLazyGetPreviousChapterQuery } = chapterApi;

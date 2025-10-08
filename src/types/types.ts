@@ -12,7 +12,7 @@ export type UserRequest = {
 }
 
 export type UserResponse = {
-  id?:number,
+  id?: number,
   name: string,
   nickname?: string,
   picture: string | null,
@@ -38,6 +38,15 @@ export interface StoryResponse {
   createdAt: string;
 }
 
+export interface StoryWithUserInfo {
+  id: StoryResponse["id"]
+  authorId: UserResponse["id"],
+  nickname: UserResponse["nickname"],
+  picture: UserResponse["picture"],
+  title: StoryResponse["title"],
+  createdAt: StoryResponse["createdAt"],
+  genre: StoryResponse['genre']
+}
 export interface ChapterRequest {
   title: string
 }
@@ -48,11 +57,7 @@ export interface ChapterResponse {
   createdAt: string
 }
 
-export interface ChapterWithPages {
-  idChapter: number;
-  title: string;
-  pages: PageResponse[];
-}
+
 
 export interface TextCell {
   id: string;
@@ -65,7 +70,7 @@ export interface TextCell {
 
 
 export interface PageRequest {
-  id?: number ;
+  id?: number;
   content: string;
   pageNumber: number;
 }
@@ -79,7 +84,22 @@ export interface PageResponse {
   createdAt: string;
 }
 
-export interface PaginatedPages{
+export interface PaginatedPages {
   pages: PageResponse[],
   total: number
 }
+
+export interface ChapterWithPages {
+  idChapter: number;
+  title: string;
+  pages: PageResponse[];
+}
+
+export interface StoryWithChapters {
+  idStory: number;
+  title: string;
+  chapters: ChapterWithPages[];
+}
+
+
+

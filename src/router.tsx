@@ -1,16 +1,17 @@
 import { Navigate, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home";
-import NewProject from "./pages/NewProject";
-import MyWorks from "./pages/MyWorks";
 import { Auth0Provider } from "@auth0/auth0-react";
 import Login from "./pages/Login";
 import MainLayout from "./layouts/MainLayout";
 import AuthCheck from "./components/AuthCheck";
-import UserProfile from "./pages/UserProfile";
 import ProyectsLayout from "./layouts/ProyectsLayout";
-import StoryEditor from "./pages/StoryEditor";
-import EditPageContent from "./pages/EditPageContent";
-import CreateNewPageContent from "./pages/CreateNewPageContent";
+import StoryReaderPage from "./pages/storys/StoryReaderPage";
+import MyWorks from "./pages/users/MyWorks";
+import NewProject from "./pages/storys/NewProject";
+import UserProfile from "./pages/users/UserProfile";
+import StoryEditor from "./pages/storys/StoryEditor";
+import CreateNewPageContent from "./pages/storys/CreateNewPageContent";
+import EditPageContent from "./pages/storys/EditPageContent";
 
 
 export default function Router() {
@@ -37,6 +38,7 @@ export default function Router() {
           <Route path="/home" index element={<Home />} />
           <Route path="/myworks" element={<MyWorks />} />
           <Route path="/user/userProfile" element={<UserProfile />} />
+          
 
         </Route>
         <Route element={<ProyectsLayout />}>
@@ -44,6 +46,8 @@ export default function Router() {
           <Route path="/storyEdit" element={<StoryEditor/>}/>
           <Route path="/editor/:idStory" element={<CreateNewPageContent />} />
           <Route path="/stories/:idStory/:idCahpter/edit" element={<EditPageContent/>}/>
+          <Route path="/stories/:storyId/view" element={<StoryReaderPage/>}/>
+          
 
         </Route>
         <Route path="/auth/login" element={<Login />} />

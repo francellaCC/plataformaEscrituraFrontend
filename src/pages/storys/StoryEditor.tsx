@@ -1,7 +1,7 @@
 import { useState } from 'react'
-import DropdownMenu from '../components/DropdownMenu';
+import DropdownMenu from '../../components/DropdownMenu';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { useGetAllChaptersQuery } from '../services/chapterApi';
+import { useGetAllChaptersQuery } from '../../services/chapterApi';
 
 export default function StoryEditor() {
 

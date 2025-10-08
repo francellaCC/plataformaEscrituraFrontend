@@ -1,13 +1,14 @@
 import { useParams } from 'react-router-dom';
 
-import { useGetChapterByIdQuery } from '../services/chapterApi';
-import { useCreatePageMutation, useGetPagesByChapterIdQuery, useUpdatePageMutation } from '../services/pageApi';
+import { useGetChapterByIdQuery } from '../../services/chapterApi';
+import { useCreatePageMutation, useGetPagesByChapterIdQuery, useUpdatePageMutation } from '../../services/pageApi';
 
-import type { ChapterResponse, PageResponse, TextCell } from '../types/types';
+import type { ChapterResponse, PageResponse, TextCell } from '../../types/types';
 
-import FormEditorPage from '../components/FormEditorPage';
+
 
 import { useCallback, useEffect, useRef, useState } from 'react';
+import FormEditorPage from '../../components/FormEditorPage';
 
 export default function EditPageContent() {
   const { idStory, idCahpter } = useParams();
