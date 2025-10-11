@@ -19,22 +19,23 @@ export type UserResponse = {
 }
 
 export interface StoryRequest {
+  id?: number;
   title: string;
   description: string;
   genre: string;
   coverImageUrl?: string;
-  visibility: 'piblic' | "private";
+  visibility: 'public' | "private"; // Corregí el typo 'piblic' → 'public'
   status: 'in_progress' | 'completed'
 }
 
 export interface StoryResponse {
-  id: string;
-  title: string,
+  id: number;
+  title: string;
   description: string;
   genre: string;
   coverImageUrl: string;
-  visibility: string;
-  status: string;
+  visibility: string; // Esto es string en lugar de los valores específicos
+  status: string;     // Esto es string en lugar de los valores específicos
   createdAt: string;
 }
 
