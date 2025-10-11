@@ -1,7 +1,10 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import DropdownMenu from '../../components/DropdownMenu';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useGetAllChaptersQuery } from '../../services/chapterApi';
+import { useGetStoryByIdQuery } from '../../services/storyApi';
+import EditStory from '../../components/EditStory';
+import { s3Api, useGetProfileImagePresignedQuery } from '../../services/s3Api';
 
 export default function StoryEditor() {
 
@@ -15,6 +18,9 @@ export default function StoryEditor() {
   const idStory = storyId ? parseInt(storyId) : 0;
 
   const { data: chapters = [] } = useGetAllChaptersQuery(idStory)
+ 
+
+ 
 
   console.log('chapters', chapters)
   const menuOptions = [
@@ -60,7 +66,7 @@ export default function StoryEditor() {
       {activeTab === "detalles" && (
         <div className="bg-white shadow rounded-lg p-6">
           <h2 className="text-lg font-semibold mb-4">Editar detalles</h2>
-          <form className="space-y-4">
+          {/* <form className="space-y-4">
             <div>
               <label className="block text-sm font-medium mb-1">
                 Título
@@ -68,6 +74,7 @@ export default function StoryEditor() {
               <input
                 type="text"
                 placeholder="Título de la historia"
+                value={story?.title}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
               />
             </div>
@@ -77,6 +84,7 @@ export default function StoryEditor() {
               </label>
               <textarea
                 placeholder="Escribe una breve descripción..."
+                value={story?.description}
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 h-24 focus:outline-none focus:ring-2 focus:ring-orange-500"
               />
             </div>
@@ -86,7 +94,8 @@ export default function StoryEditor() {
             >
               Guardar
             </button>
-          </form>
+          </form> */}
+          <EditStory/>
         </div>
       )}
 
